@@ -1,0 +1,77 @@
+@startuml
+start
+title Matches Flow
+: 新事件;
+switch ( 事件編號 )
+case (  )
+    : 新訂單;
+
+    switch (訂單類型)
+    case ()
+        : 買;
+
+        partition 訂單資料處理工具 {
+            switch ( 訂單定價方式 )
+            case ()
+                : 市價;
+
+                repeat : 取得當前最佳限價訂單;
+                : 結算搓合訂單;
+                if (搓合訂單數量是否全部結算?) then (n)
+                    : 更新搓合訂單數量;
+                else (y)
+                    : 刪除訂單資料;
+                endif
+                repeat while (訂單數量是否全部完成?) is (否) not (是)
+            case ()
+                : 限價;
+
+                repeat
+                if (當前最佳限價訂單價格優於訂單) then
+                    : 取得當前最佳限價訂單;
+                else   
+                    : 取得指定價格限價訂單;
+                endif
+                : 取得最早的市價訂單;
+
+
+                : 判斷最佳搓合訂單;
+                : 結算搓合訂單;
+                if (搓合訂單數量是否全部結算?) then (n)
+                    : 更新搓合訂單數量;
+                else (y)
+                    : 刪除訂單資料;
+                endif
+                repeat while (訂單是否全部完成?) is (否) not (是)
+            endswitch
+            
+            : 回傳搓合完成的訂單;
+        }
+
+    case ()
+        : 賣;
+        partition 訂單資料處理工具 {
+            note right
+            與買當處理流程相同
+            endnote 
+        }
+    endswitch
+
+    if (是否剩餘未完成的訂單) then (y)
+         partition 訂單資料處理工具 {
+            switch (訂單類型)
+            case ()
+                : 市價;
+                : 寫入市價列表;
+            case ()
+                : 限價;
+                : 寫入限價表;
+                : 更新價格序列表;
+            endswitch
+         }
+    endif
+case (  )
+    : 結束搓合處理;
+endswitch
+end
+@enduml
