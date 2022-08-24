@@ -52,7 +52,7 @@ case (  )
         : 賣;
         partition 訂單資料處理工具 {
             note right
-            與買當處理流程相同
+            與買單處理流程相同
             endnote 
         }
     endswitch
